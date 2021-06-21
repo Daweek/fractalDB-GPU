@@ -13,16 +13,19 @@ WindowGL::WindowGL(unsigned int w, unsigned int h, Render*& rnd, Accel*& gpu,Fra
 	glfwWindowHint(GLFW_SAMPLES,4);
 	//glfwWindowHint(GLFW_VISIBLE,GLFW_FALSE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	
 	m_pWinID = glfwCreateWindow(w, h, "FractalCreator Visor",NULL,NULL);
 	glfwMakeContextCurrent(m_pWinID);
 
 	// Glew Initialization
+	
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK)
 		assert(!"GLEW initialization\n");
 	if(!glewIsSupported("GL_EXT_framebuffer_object"))
 		assert(!"The GL_EXT_framebuffer_object extension is required.\n");
+	
 
 	// Callbacks for glfw and hints for window
 	//glfwSetWindowPos(m_pWinID,12,12);
@@ -69,8 +72,8 @@ void WindowGL::renderScene(Settings cnfg){
 	}
 	
 	// Draw the cube, the cross and the particles
-	if(cnfg.fbt == MAIN)	m_pRender->renderToNormal(cnfg);
-	if(cnfg.fbt == FBO)		m_pRender->renderToFBO(cnfg);
+	if(cnfg.fb == MAIN)	m_pRender->renderToNormal(cnfg);
+	if(cnfg.fb == FBO)	m_pRender->renderToFBO(cnfg);
 
 	// Swap the toilet...
 
@@ -102,16 +105,33 @@ auto WindowGL::keyboard(int key, int scancode, int action, int mods) -> void {
 		if(key == GLFW_KEY_D){
 			m_pRender->m_bGenFrac = true;
 			m_pFrac->m_fileCount++;
+			
 		}
 		if(key == GLFW_KEY_A){
 			if(m_pFrac->m_fileCount>0){
 				m_pFrac->m_fileCount--;
 				m_pRender->m_bGenFrac = true;
+				
 			}
 		}
 
 	}
 }
+
+void WindowGL::resizeFrameBuffer(int w, int h){
+	m_uiWinWidth = w;
+	m_uiWinHeight = h;
+
+	m_pRender->resizeGLbuffer(w,h);
+
+	cout<<"Resize Frame Buffer"<<endl;
+	glfwSetWindowSize(m_pWinID, w, h);
+
+	
+
+
+}
+
 
 WindowGL::~WindowGL() {
 

@@ -44,6 +44,7 @@ class Fractal {
   
   public:
     int         m_numIteration;
+    int         m_numInstances;
     int         m_totalWeights;
     weights     *m_weights;
     int         m_numClass;
@@ -57,7 +58,7 @@ class Fractal {
     void    loadWeightsFromCSV();
     void    paramGenRandom();
     
-    Fractal(Accel*& gpu, int numClass = DEFAULT_NUM_CLASS, int = DEFAULT_POINTS);
+    Fractal(Accel*& gpu, int numClass = DEFAULT_NUM_CLASS, int = DEFAULT_POINTS, int = DEFAULT_NUM_INST);
     inline int getNumOfMaps(){return m_numMaps;};
     inline int getNumOfPoints(){return m_numPoints;};
     inline int setNumOfPoints(int num){return m_numPoints = num;};

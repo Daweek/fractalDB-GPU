@@ -132,6 +132,8 @@ __global__ void kernel_2(float2* d_poss,float2* d_color , int numPoints,mapping 
 
 }
 
+
+
 __global__ void kernel_test(float2* d_pointData, int numPoints,mapping *d_mappings, int numMappings)
 {
   int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -146,7 +148,6 @@ __global__ void kernel_test(float2* d_pointData, int numPoints,mapping *d_mappin
 
 }
 
-
 Accel::Accel() {
 
 	// Initialize CUDA
@@ -158,6 +159,7 @@ Accel::Accel() {
 	cudaRuntimeGetVersion(&m_runtimeVersion);
 
 	// Print device properties
+	printf("............................GPU...........................\t\n");
 	printf("\tDevice Name: %s\n", m_cuDevProp.name);
 	printf("\tCUDA Driver Version / Runtime Version: %d.%d / %d.%d\n",
 					m_driverVersion / 1000, (m_driverVersion % 100) / 10,
@@ -170,6 +172,7 @@ Accel::Accel() {
 	printf("\tTotal Number of Threads: %d\n", m_cuDevProp.multiProcessorCount *
 		m_cuDevProp.maxThreadsPerMultiProcessor);
 	printf("\tMaximum Threads per Block: %d\n", m_cuDevProp.maxThreadsPerBlock);
+	printf(".........................................................\t\n\n");
 	
 
 	// Setting up all pointers
@@ -194,7 +197,7 @@ Accel::Accel() {
 }
 
 void Accel::interopCUDA(){
-	std::cout<<"Seting up CUDA-OpenGL buffer...\n";
+	std::cout<<"Seting up CUDA-OpenGL buffer...\n\n";
   // Prepare graphics interoperability
   if(g_strucMapVBO != NULL) 
 		checkCudaErrors(cudaGraphicsUnregisterResource(g_strucMapVBO));
@@ -288,8 +291,10 @@ void Accel::fractalKernel(int numMappings, int numPoints){
 	
 	// Compute Fractal
 		kernel_2<<<m_numBlocks, m_blockSize, numMappings * sizeof(mapping)>>>
-      ((float2*)d_glPoss,(float2*)d_glColor , numPoints, d_map, numMappings);	
-	
+    	((float2*)d_glPoss,(float2*)d_glColor , numPoints, d_map, numMappings);
+			
+			
+		
 	// Compute Borders of the fractal
 	
 	dim3 gridSize = 256;

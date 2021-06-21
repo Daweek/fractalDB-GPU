@@ -14,6 +14,9 @@ const GLfloat Render::m_fQuadVertexBufferData[18] = {
 				 1.0f, -1.0f, 0.0f,
 				 1.0f,  1.0f, 0.0f,
 };
+// Strings
+const string cRenderType[] = {"GRAY","COLOR"};
+const string cRenderFilter[] = {"POINTS","PATCH"};
 
 Render::Render(	unsigned int w, unsigned int h, Accel*& gpu, Fractal*& frac) {
 
@@ -53,6 +56,8 @@ Render::Render(	unsigned int w, unsigned int h, Accel*& gpu, Fractal*& frac) {
 	m_uNumMappings		= glGetUniformLocation(m_uiSimpleProgID, "numMappings");
 	m_uProjection			= glGetUniformLocation(m_uiSimpleProgID, "projection");
 	m_uRotation				= glGetUniformLocation(m_uiSimpleProgID, "rotation");
+	m_uRenderType			= glGetUniformLocation(m_uiSimpleProgID, "rtype");
+	m_uRandom					= glGetUniformLocation(m_uiSimpleProgID, "rnd");
 	
 
 	// Prepare shaders for FBO presentation on Texture
@@ -95,6 +100,7 @@ Render::Render(	unsigned int w, unsigned int h, Accel*& gpu, Fractal*& frac) {
 	m_bGenFrac = true;
 
 	m_rotationType = 0;
+	m_renderType = 0;
 }
 
 
@@ -163,14 +169,18 @@ void Render::drawALL(Settings cnfg){
 		rot[0] = 1.0; rot[1] = 1.0;
 		break;
 	}
-
-
+	
+	//cout<<"Rotation tipe: "<<rot[0]<<","<<rot[1]<<endl;
+	
 	// Drawing
 	int numMappings = m_pFrac->getNumOfMaps();
 	glUseProgram(m_uiSimpleProgID);
 	glUniform1i(m_uNumMappings,numMappings);
 	glUniformMatrix4fv(m_uProjection, 1, GL_FALSE, &m4Projection[0][0]);
 	glUniform2f(m_uRotation,rot[0],rot[1]);
+	glUniform1i(m_uRenderType,m_renderType);
+	glUniform2f(m_uRandom,m_randoms[0],m_randoms[1]);
+	
 
 	// Draw Fractals
 	#if 0
@@ -204,9 +214,12 @@ void Render::drawALL(Settings cnfg){
 
 		
 
-		glPointSize(1.0);
-		glDrawArrays(GL_POINTS,0,m_pFrac->getNumOfPoints());
+		//glPointSize(20.0);
+		if(m_renderType == 1 || m_renderType == 3 )	glPointSize(3.0); //Patch configuration
+		else 								glPointSize(1.0); //Point configuration	
 
+		glDrawArrays(GL_POINTS,0,m_pFrac->getNumOfPoints());
+		//glDrawArrays(GL_POINTS,0,10);
 		//float minmaxData[6] = {0,0,0,0,0,0};
 		//glGetMinmax(GL_MINMAX, GL_FALSE, GL_RGB, GL_FLOAT, minmaxData);
 		//cout.setf(ios::scientific);
@@ -266,6 +279,43 @@ void Render::renderToFBO(Settings cnfg){
 	glDrawArrays(GL_TRIANGLES, 0, 6); // 2*3 indices starting at 0 -> 2 triangles
 }
 
+void Render::write_paramsto_csv( mapping *m, int numMaps, int count){
+    // Make a CSV file with one column of integer values
+    // filename - the name of the file
+    // colname - the name of the one and only column
+    // vals - an integer vector of values
+
+		// Write parameters to CSV
+		stringstream ss;
+		ss<<setw(5)<<setfill('0')<<to_string(count);
+		string s = ss.str();
+		//cout<<s<<endl;
+
+		string filecsv = m_outPathcsv +"/" + s + ".csv";
+    
+    // Create an output filestream object
+		std::cout.setf(std::ios::scientific);
+    std::ofstream myFile(filecsv);
+    
+		// Send the column name to the stream
+    //myFile << colname << "\n";
+    
+    // Send data to the stream
+    for(int i = 0; i < numMaps; ++i)
+    {
+        myFile<<scientific<< m[i].a <<","
+													<< m[i].b <<","
+													<< m[i].c <<","
+													<< m[i].d <<","
+													<< m[i].x <<","
+													<< m[i].y <<","
+													<< m[i].p <<"\n";
+    }
+    
+		//cout<<"Writting csv..."<<endl;
+    // Close the file
+    myFile.close();
+}
 float Render::numPixel(){
 	
 	int count = 0;
@@ -304,50 +354,11 @@ float Render::numPixel(){
 	return density;
 }
 
-void Render::write_paramsto_csv( mapping *m, int numMaps, int count){
-    // Make a CSV file with one column of integer values
-    // filename - the name of the file
-    // colname - the name of the one and only column
-    // vals - an integer vector of values
-
-		// Write parameters to CSV
-		stringstream ss;
-		ss<<setw(5)<<setfill('0')<<to_string(count);
-		string s = ss.str();
-		//cout<<s<<endl;
-
-		string filecsv = m_outPathcsv +"/" + s + ".csv";
-    
-    // Create an output filestream object
-		std::cout.setf(std::ios::scientific);
-    std::ofstream myFile(filecsv);
-    
-		// Send the column name to the stream
-    //myFile << colname << "\n";
-    
-    // Send data to the stream
-    for(int i = 0; i < numMaps; ++i)
-    {
-        myFile<<scientific<< m[i].a <<","
-													<< m[i].b <<","
-													<< m[i].c <<","
-													<< m[i].d <<","
-													<< m[i].x <<","
-													<< m[i].y <<","
-													<< m[i].p <<"\n";
-    }
-    
-		//cout<<"Writting csv..."<<endl;
-    // Close the file
-    myFile.close();
-}
-
 void Render::savePNGfromOpenGLbuffer(int count){
 	//const char *filepath = "./data/map.png";
 	stringstream ss;
 	ss<<setw(5)<<setfill('0')<<to_string(count);
 	string s = ss.str();
-
 
 	string fileimg = m_outPathimg + "/" + s + ".png";
 	int width, height;
@@ -377,7 +388,11 @@ void Render::savePNGfromOpenGLbuffer(int count){
 	//glReadBuffer(GL_FRONT);
 	//glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
 	stbi_flip_vertically_on_write(true);
-	stbi_write_png(fileimg.c_str(), width, height, nrChannels, m_glFrameBuffer, stride);
+	stbi_write_png(fileimg.c_str(), width-2, height-2, nrChannels, m_glFrameBuffer, stride);
+
+
+	//string fileimg2 = m_outPathimg + "/" + s + ".jpg";
+	//stbi_write_jpg(fileimg2.c_str(), width, height, 3, m_glFrameBuffer, 100);
 
 }
 
@@ -397,9 +412,12 @@ void Render::setRootDirParams(string dir, int nclass, float density){
 
 }
 
-void Render::setRootDirDataSet(string dir, int nclass, int count){
+void Render::setRootDirDataSet(string dir, int nclass, int count,Settings sett){
 	// For file path
 	m_rootDir = dir;
+
+	//cout<<"Color:"<<cRenderType[s.rt]<<endl;
+	//cout<<"Filter:"<<cRenderFilter[s.rf]<<endl<<endl;
 	
 	if (count>=0){
 		stringstream ss;
@@ -408,15 +426,28 @@ void Render::setRootDirDataSet(string dir, int nclass, int count){
 
 		ostringstream p;
 		p<<fixed<<nclass;
-		m_outPathimg = m_rootDir + "FractalDB-"+p.str()+"/"+s;
+		m_outPathimg = m_rootDir + "FractalDB-"+p.str()+"_"+ cRenderFilter[sett.rf]+cRenderType[sett.rt]+"/"+s;
 
 		filesystem::create_directory(m_outPathimg);
 	}else{
 		ostringstream p;
 		p<<fixed<<nclass;
-		m_outPathimg = m_rootDir + "FractalDB-"+p.str();
+		m_outPathimg = m_rootDir + "FractalDB-"+p.str()+"_"+cRenderFilter[sett.rf]+cRenderType[sett.rt];
 		filesystem::create_directory(m_outPathimg);
 	}
+}
+
+void Render::resizeGLbuffer(int w, int h){
+
+	m_uiFboWidth 	= w;
+	m_uiFboHeight = h;
+
+	if(m_glFrameBuffer != NULL)
+		free(m_glFrameBuffer);
+	
+	cout<<"Resize render GL buffer "<<endl;
+	m_glFrameBuffer = (GLubyte*) malloc (3 * sizeof(GLubyte) * w * h);
+
 }
 
 Render::~Render() {
@@ -426,7 +457,9 @@ Render::~Render() {
 	glDeleteFramebuffers(1, &m_uiFboFramBuff);
 	glDeleteVertexArrays(0,&m_uiVertArrayID);
 
-	free(m_glFrameBuffer);
+	
+	if(m_glFrameBuffer != NULL)
+		free(m_glFrameBuffer);
 
 	std::cout<<"Cleaning Text2D...\n";
 	cleanupText2D();

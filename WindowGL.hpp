@@ -27,8 +27,6 @@ class WindowGL {
 		Accel* 						m_pAccel;
 		Fractal*					m_pFrac;
 
-		unsigned int			m_uiWinWidth;
-		unsigned int			m_uiWinHeight;
 		bool							m_bContinue;
 		bool							m_bPauseSim;
 
@@ -45,6 +43,8 @@ class WindowGL {
 
 		
 	public:
+		unsigned int			m_uiWinWidth;
+		unsigned int			m_uiWinHeight;
 		GLFWwindow* 			m_pWinID;
 		double						m_dTimeOld;
 		double						m_dTimeCurrent;
@@ -54,6 +54,7 @@ class WindowGL {
 		WindowGL(unsigned int w, unsigned int h,Render*& rnd,Accel*& gpu, Fractal*& frac);
 		void renderScene(Settings cnfg);
 		auto keyboard(int key, int scancode, int action, int mods) -> void;
+		void resizeFrameBuffer(int w, int h);
 		inline bool continueRender(){return m_bContinue;};
 		inline bool pauseSimulation(){return m_bPauseSim;};
 		~WindowGL();

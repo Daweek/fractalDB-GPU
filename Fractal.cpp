@@ -6,12 +6,9 @@
  */
 #include "Fractal.hpp"
 
-Fractal::Fractal(Accel*& gpu, int numClass, int numPoints){
-
-  
-  cout<<"Init FractalCreator and NumCpp...\n";
-  
-  
+Fractal::Fractal(Accel*& gpu, int numClass, int numPoints, int numInstances){
+   
+	// Cleaning main variables
   m_map = NULL;
 	m_weights = NULL;
   m_numMaps = 0;
@@ -21,6 +18,7 @@ Fractal::Fractal(Accel*& gpu, int numClass, int numPoints){
 	m_totalWeights = 0;
   m_numClass  = numClass;
 	m_numIteration = 0;
+	m_numInstances = numInstances;
   
 }
 
@@ -247,12 +245,12 @@ void Fractal::appendWeights(int count){
 
 void Fractal::initFractalParam(Settings cfg, int count){
 
-	if(cfg.pgt == FROM_CSV){
+	if(cfg.pa == FROM_CSV){
     paramGenFromFile(count);
     //cout<<"From File"<<endl;
   }
 
-  if(cfg.pgt == FROM_RAND){ 
+  if(cfg.pa == FROM_RAND){ 
     paramGenRandom();
     //cout<<"From Random"<<endl;
   }

@@ -41,7 +41,6 @@
 
 
 const std::string cFrameBufferType[] = {"MAIN","FBO"};
-const std::string cRenderParticleType[] = {"POINTS","SPHERE","TEXTURE"};
 
 class Render{
 
@@ -49,14 +48,13 @@ class Render{
 		Accel					*m_pGpu;
 		Fractal				*m_pFrac;
 
-		unsigned int	m_uiFboWidth;
-		unsigned int	m_uiFboHeight;
-
 		GLuint 				m_uiSimpleProgID;
 		GLuint				m_uNumMappings;
 		GLuint				m_uProjection;
 		GLuint				m_uRotation;
-	
+		GLuint				m_uRenderType;
+		GLuint				m_uRandom;
+		
 		GLuint				m_uiTextureProgID;
 		GLuint				m_uiTextureID;
 		GLuint				m_uiQuadVertexBuffer;
@@ -73,11 +71,16 @@ class Render{
 
 				
 	public:
+		unsigned int	m_uiFboWidth;
+		unsigned int	m_uiFboHeight;
+
 		glm::mat4			m_m4SaveRotation;
 		int						m_iFps;
 		int						m_rotationType;
 		unsigned int	*m_uiSphereDitail;
 		bool					m_bGenFrac;
+		int						m_renderType;  
+		float					m_randoms[2];   
 		GLubyte				*m_glFrameBuffer;
 
 		string				m_outPathcsv;
@@ -89,11 +92,12 @@ class Render{
 		void 		drawALL(Settings cnfg);
 		void 		drawInfo(Settings cnfg);
 		void		setRootDirParams(string dir, int nclass, float density);
-		void		setRootDirDataSet(string dir, int nclass, int count);
+		void		setRootDirDataSet(string dir, int nclass, int count, Settings s);
 		
 		float   numPixel();
 		void 		write_paramsto_csv(mapping *m, int numMaps,int count);
 		void		savePNGfromOpenGLbuffer(int count);
+		void		resizeGLbuffer(int w, int h);
 		
 		Render(unsigned int w, unsigned int h, Accel*& gpu, Fractal*& frac);
 		~Render();

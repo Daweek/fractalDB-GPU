@@ -31,7 +31,7 @@ ifeq ("$(HOSTNAME)","Edgar-PC")
 endif
 
 ###############	Debug, 0 -> False,  1-> True
-DEBUGON						:= 0
+DEBUGON						:= 1
 
 ifeq (1,$(DEBUGON))
 	CXXDEBUG 				:= -g -Wall
@@ -93,3 +93,6 @@ texture.o: texture.cpp texture.hpp
 clean:
 	-rm -f *.o 
 	-rm -f $(TARGET)
+
+cleanDB:
+	-rm -rf data/FractalDB*

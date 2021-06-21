@@ -13,13 +13,16 @@
 
 // Memory related
 #define MIN_THREADS 1
-#define DEFAULT_THREADS 512
+//#define DEFAULT_THREADS 512
 #define MAX_THREADS 1024
 
 #define MIN_POINTS 1
 #define DEFAULT_POINTS 100*1000
-#define DEFAULT_NUM_CLASS 1000
+#define DEFAULT_NUM_CLASS 10
+#define DEFAULT_NUM_INST	1
 #define MAX_POINTS 5*1000*1000 // 5 000 000
+
+using namespace std;
 
 // Structs for points
 typedef struct mp
@@ -39,19 +42,21 @@ typedef struct weigs
 	float	wf;
 } weights;
 
-enum RenderType{POINTS_GRAY,POINTS_COLOR,PATCH_GRAY,PATCH_COLOR};
+enum RenderType{GRAY,COLOR};
+enum RenderFilter{POINTS,PATCH};
 enum ParametersGen{FROM_CSV,FROM_RAND};
 enum FrameBufferType{MAIN,FBO};
-enum KernelType{NORMAL,DYNAMIC};
+enum RenderGenType{PARAMS,DATASET};
 
 
 struct Settings{
-		RenderType					rpt;
-		FrameBufferType			fbt;
-		KernelType					krt;
-		ParametersGen				pgt;
+		RenderType					rt;
+		RenderFilter				rf;
+		FrameBufferType			fb;
+		ParametersGen				pa;
+		RenderGenType				pt;
 };
 
-using namespace std;
+
 
 #endif // Header
