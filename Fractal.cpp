@@ -183,25 +183,40 @@ void Fractal::paramGenRandom(){
 	
 	a = b = c = d = e = f = prob = sum_proba = 0.0f;
 
-	param_size = nc::random::randInt<int>(2,8);
+	
+	random_device                  rand_dev;
+  mt19937                        gen(rand_dev());
+  uniform_real_distribution<>    dis(-1.0, 1.0);
+	uniform_int_distribution<>     distint(2,8);
+	
+	//param_size = nc::random::randInt<int>(2,8);
+	param_size = distint(gen);
+	cout<<"Param_size:"<<param_size<<std::endl;
 	m_numMaps = param_size;
-	//std::cout<<"Param_size:"<<param_size<<std::endl;
 
 	m_map = (mapping*)malloc(param_size * sizeof(mapping));
-	
 
 	for (int i=0;i <param_size;i++){
 		
 		a = b = c = d = e = f = 0.0f;
 		auto param_rand = nc::random::uniform<float>({1,6},-1.0f,1.0f);
 		//param_rand.print();
+
+		/*
 		a = param_rand(0,0);
 		b = param_rand(0,1);
 		c = param_rand(0,2);
 		d = param_rand(0,3);
 		e = param_rand(0,4);
 		f = param_rand(0,5);
-		
+		*/
+		a = dis(gen);
+		b = dis(gen);
+		c = dis(gen);
+		d = dis(gen);
+		e = dis(gen);
+		f = dis(gen);
+
 		prob = abs(a*d - b*c);
 		sum_proba += prob;
 
