@@ -18,6 +18,7 @@
 #include <sstream>
 #include <iomanip>
 #include <filesystem>
+#include <random>
 
 // Definitions
 #include "Defs.hpp"
@@ -30,8 +31,6 @@
 #include <stb/stb_image.h>
 #include <stb/stb_image_write.h>
 
-// NumCpp
-#include <NumCpp.hpp>
 
 class Fractal {
 

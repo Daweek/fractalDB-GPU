@@ -16,7 +16,7 @@
 #include <vector>
 #include <filesystem>
 
-#include <GL/glew.h>
+#include "graphics.hpp"
 
 #include <cuda.h>
 #include <cuda_runtime.h>

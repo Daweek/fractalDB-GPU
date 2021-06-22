@@ -66,8 +66,6 @@ int main(int argc, char **argv)
 	cout<<"Render type:"<<cRenderType[g_sConfig.rt]<<endl;
 	cout<<"Render filter type:"<<cRenderFilter[g_sConfig.rf]<<endl<<endl;
 
-	// Init numCPP
-	nc::random::seed(2);
 
 	// CUDA Init..
 	g_oGPU		= new Accel();

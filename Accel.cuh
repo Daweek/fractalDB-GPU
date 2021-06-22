@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
+#include "graphics.hpp"
 
 // ***** CUDA includes
 #include <cuda.h>

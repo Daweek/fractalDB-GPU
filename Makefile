@@ -13,7 +13,8 @@ NVCC     	= $(CUDA)/bin/nvcc
 CUDAINC   = -I. -I$(CUDA)/include -I$(CUDA_SDK)/common/inc 
 INCQT			= -I/usr/include/x86_64-linux-gnu/qt5/
 
-INC = -I$(HOME)/graphics/NumCpp/NumCpp/include
+INC =
+INCEGL = -Iglew/include
 #Library Paths
 CUDALIB		= -L/usr/lib/x86_64-linux-gnu -L$(CUDA)/lib64 \
 						-lcuda -lcudart -lcudadevrt
@@ -21,6 +22,9 @@ GLLIB  		= -lGL -lGLU -lGLEW -lglfw
 QTLIB			= -lQt5Core
 OTHERLIB	= -lfreeimage -lstdc++fs 
 LIB 			= $(CUDALIB) $(GLLIB) -lm -lstb
+
+GLLIBEGL	= -lEGL -lGLEW  -lOpenGL
+LIBEGL		= -Lglew/lib $(CUDALIB) $(GLLIBEGL) -lm -lstb
 
 ################ Choosing architecture code for GPU ############################
 NVCC_ARCH			=
@@ -31,7 +35,7 @@ ifeq ("$(HOSTNAME)","Edgar-PC")
 endif
 
 ###############	Debug, 0 -> False,  1-> True
-DEBUGON						:= 1
+DEBUGON						:= 0
 
 ifeq (1,$(DEBUGON))
 	CXXDEBUG 				:= -g -Wall
@@ -51,6 +55,10 @@ endif
 CXXFLAGS				= $(CXXDEBUG) $(CXXOPT) -fopenmp -Wno-unused-function
 NVCCFLAGS 			= $(NVCCDEBUG) $(NVCC_DP) --compile $(NVCCOPT) $(NVCC_ARCH)
 NVCCFLAGSLINK		= $(NVCCDEBUG) $(NVCC_DP) $(NVCCOPT) $(NVCC_ARCH)
+CXXFLAGSEGL			= $(CXXDEBUG) $(CXXOPT) -fopenmp -Wno-unused-function -DGLEW_EGL
+NVCCFLAGSEGL		= $(NVCCDEBUG) $(NVCC_DP) --compile $(NVCCOPT) $(NVCC_ARCH) -DGLEW_EGL
+NVCCFLAGSLINKEGL		= $(NVCCDEBUG) $(NVCC_DP) $(NVCCOPT) $(NVCC_ARCH) -DGLEW_EGL
+
 ###############################################################################
 
 TARGET = fracGPU
@@ -65,8 +73,6 @@ fracGPU : main.o $(OBJLIST)
 main.o: Main.cpp Defs.hpp
 	$(CXX) $(CXXFLAGS) $(INC) $(CUDAINC) -c $< -o $@ 
 
-
-
 Accel.o: Accel.cu
 	$(NVCC) $(NVCCFLAGS) $(NVCCFLAGSXCOMP) $(INC) $(CUDAINC) $< -o $@ 
 
@@ -79,8 +85,6 @@ Render.o: Render.cpp Render.hpp
 Fractal.o: Fractal.cpp Fractal.hpp
 	$(CXX) $(CXXFLAGS) $(INC) $(CUDAINC) -c $< -o $@
 
-
-
 text2D.o: text2D.cpp text2D.hpp  
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 	
@@ -90,9 +94,40 @@ shader.o: shader.cpp shader.hpp
 texture.o: texture.cpp texture.hpp
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@	
 
+#---------------------------- EGL -------------------------------------------
+OBJLISTEGL = shaderEGL.o text2DEGL.o textureEGL.o AccelEGL.o WindowGLEGL.o RenderEGL.o FractalEGL.o
+
+eglfracGPU : mainEGL.o $(OBJLISTEGL)
+	$(NVCC) -DGLEW_STATIC $(NVCCFLAGSLINKEGL) $(NVCCFLAGSXCOMP) $(CUDAINC) $< -o $@ $(OBJLISTEGL) $(LIBEGL)
+
+mainEGL.o: Main.cpp Defs.hpp
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) $(CUDAINC) -c $< -o $@ 
+
+AccelEGL.o: Accel.cu
+	$(NVCC) $(NVCCFLAGSEGL) $(NVCCFLAGSXCOMP) $(INCEGL) $(CUDAINC) $< -o $@ 
+
+WindowGLEGL.o: WindowGL.cpp WindowGL.hpp 
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) $(CUDAINC) -c $< -o $@	
+
+RenderEGL.o: Render.cpp Render.hpp
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) $(CUDAINC) -c $< -o $@
+
+FractalEGL.o: Fractal.cpp Fractal.hpp
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) $(CUDAINC) -c $< -o $@
+
+text2DEGL.o: text2D.cpp text2D.hpp  
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) -c $< -o $@
+	
+shaderEGL.o: shader.cpp shader.hpp
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) -c $< -o $@	
+	
+textureEGL.o: texture.cpp texture.hpp
+	$(CXX) $(CXXFLAGSEGL) $(INCEGL) -c $< -o $@	
+
+
 clean:
 	-rm -f *.o 
-	-rm -f $(TARGET)
+	-rm -f $(TARGET) eglfracGPU
 
 cleanDB:
 	-rm -rf data/FractalDB*
