@@ -341,9 +341,9 @@ void Accel::malloCUDA(std::vector<mapping*>& mapped, int numMaps[]){
 	// For the parameters of the Fractals
 
 	
-		if(d_map[k] != NULL)
-			checkCudaErrors(cudaFree(d_map[k]));
-  	checkCudaErrors(cudaMalloc((void**)&d_map[k],numMaps[k]*sizeof(mapping)));
+		if(d_map[0] != NULL)
+			checkCudaErrors(cudaFree(d_map[0]));
+  	checkCudaErrors(cudaMalloc((void**)&d_map[0],numMaps[0]*sizeof(mapping)));
   	checkCudaErrors(cudaMemcpy(d_map[k],mapped[k],numMaps[k]*sizeof(mapping),cudaMemcpyHostToDevice));
 	
 	for(int k=0; k<MAPS_GPU ; k++){
