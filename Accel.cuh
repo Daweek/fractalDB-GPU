@@ -40,39 +40,39 @@ class Accel {
 		
 		
 		float  		m_kernel_mili; 
-		float			*d_glmap;
-		float			*d_glPoss;
-		float			*d_glColor;
-		float4		*d_borders;
-		float			*h_borders;
-		int				*d_mutex;
+		float			*d_glPoss[MAPS_GPU];
+		float			*d_glColor[MAPS_GPU];
+		float4		*d_borders[MAPS_GPU];
+		float			*h_borders[MAPS_GPU];
+		int				*d_mutex[MAPS_GPU];
 
-		mapping	*d_map;
+		mapping		*d_map[MAPS_GPU];
 	
-		struct cudaGraphicsResource* g_strucMapVBO;
-		struct cudaGraphicsResource* g_strucPoss;
-		struct cudaGraphicsResource* g_strucColor;
+		//struct cudaGraphicsResource* g_strucMapVBO[MAPS_GPU];
+		struct cudaGraphicsResource* g_strucPoss[MAPS_GPU];
+		struct cudaGraphicsResource* g_strucColor[MAPS_GPU];
 
 
 	public:
 		float		m_fFlops;
 		float		m_fStepsec;
 
-		GLuint 	g_mapVBO;
-		GLuint	g_poss;
-		GLuint	g_color;
+		//GLuint 	g_mapVBO;
+		GLuint	g_poss[MAPS_GPU];
+		GLuint	g_color[MAPS_GPU];
 
-		float		m_fXmin;
-		float		m_fXmax;
-		float		m_fYmin;
-		float		m_fYmax;
+		float		m_fXmin[MAPS_GPU];
+		float		m_fXmax[MAPS_GPU];
+		float		m_fYmin[MAPS_GPU];
+		float		m_fYmax[MAPS_GPU];
 
 		bool		m_bChangeMalloc;
 		bool		m_bChangeInterop;
 
 		Accel();
-		void fractalKernel(int numMappings, int numPoints);
-		void malloCUDA(mapping *mapped, int numMaps);
+		void fractalKernel(int numMappings[], int numPoints);
+		//void malloCUDA(mapping *mapped[MAPS_GPU], int numMaps[]);
+		void malloCUDA(std::vector<mapping*>& mapped, int numMaps[]);
 		void interopCUDA();
 		~Accel();
 

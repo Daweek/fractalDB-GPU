@@ -73,23 +73,27 @@ int main(int argc, char **argv)
 	// Fractal object settings
 	g_oFrac 	= new Fractal(g_oGPU, args["class"].as<int>(), args["npoints"].as<int>(),args["instances"].as<int>());
 
+	cout<<"Exit before rendering..."<<endl;
+	exit(0);
 	// Init GLFW and OpenGL
 	g_oWindow = new	WindowGL(g_WinWidth,g_WinHeight,g_oRender,g_oGPU,g_oFrac);
 		
 	g_oGPU->interopCUDA();
 	
+	
 	// Prepare paths for output
 	g_oRender->setRootDirParams("data/",g_oFrac->m_numClass,0.2f);
 
 	// For Debuggin purposes
-	#if 0
+	#if 1
 		int count = 0;  
 		while (g_oWindow->continueRender() && !glfwWindowShouldClose(g_oWindow->m_pWinID)){
 
 			if(g_oRender->m_bGenFrac){
 				//do{
+					
 					g_oFrac->initFractalParam(g_sConfig,count);
-					g_oGPU->malloCUDA(g_oFrac->m_map, g_oFrac->getNumOfMaps());
+					g_oGPU->malloCUDA(g_oFrac->m_map, g_oFrac->m_numMaps);
 					g_oFrac->generateFractal();
 					g_oWindow->renderScene(g_sConfig);
 					glfwPollEvents();
@@ -136,7 +140,7 @@ int main(int argc, char **argv)
 		}while(g_oRender->numPixel() < 0.2);
 
 		//cout<<filecsv<<endl;
-		g_oRender->write_paramsto_csv(g_oFrac->m_map,g_oFrac->getNumOfMaps(),count);
+		g_oRender->write_paramsto_csv(g_oFrac->m_map[0],g_oFrac->getNumOfMaps(),count);
 					
 		//cout<<fileimg<<endl;
 		g_oRender->savePNGfromOpenGLbuffer(count);
@@ -208,13 +212,13 @@ int main(int argc, char **argv)
 		string s = ss.str();
 		cout<<"DB Class save: " << s << endl;	
 
-
+	#if 0
 	// Test
 	const int width = 362;
  	const int height = 362;
 	#define CHANNEL_NUM 3
 
-	/*** NOTICE!! You have to use uint8_t array to pass in stb function  ***/
+	/ *** NOTICE!! You have to use uint8_t array to pass in stb function  ***/
 	// Because the size of color is normally 255, 8bit.
 	// If you don't use this one, you will get a weird imge.
 	uint8_t* pixels = new uint8_t[width * height * CHANNEL_NUM];
@@ -238,15 +242,15 @@ int main(int argc, char **argv)
 	}
 	
 	// if CHANNEL_NUM is 4, you can use alpha channel in png
-	stbi_write_png("stbpng.png", width, height, CHANNEL_NUM, pixels, width * CHANNEL_NUM);
+	//stbi_write_png("stbpng.png", width, height, CHANNEL_NUM, pixels, width * CHANNEL_NUM);
 
 	// You have to use 3 comp for complete jpg file. If not, the image will be grayscale or nothing.
-	stbi_write_jpg("stbjpg3.jpg", width, height, 3, pixels, 100);
+	//stbi_write_jpg("stbjpg3.jpg", width, height, 3, pixels, 100);
 	
 	
 	delete[] pixels;
 
-	
+	#endif
 
 	}
 #endif

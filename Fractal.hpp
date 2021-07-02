@@ -36,19 +36,20 @@ class Fractal {
 
   private:
     Accel*      m_pGPU;
-
-    int         m_numMaps;
     int         m_numPoints;
     
   
   public:
+    int         m_numMaps[MAPS_GPU];
     int         m_numIteration;
     int         m_numInstances;
     int         m_totalWeights;
     weights     *m_weights;
     int         m_numClass;
     int 				m_fileCount;
-    mapping     *m_map;
+
+    vector<mapping*> m_map; 
+    //mapping     *m_map[MAPS_GPU];
 
     void    initFractalParam(Settings cfg, int count);
     void    appendWeights(int count);
@@ -58,7 +59,7 @@ class Fractal {
     void    paramGenRandom();
     
     Fractal(Accel*& gpu, int numClass = DEFAULT_NUM_CLASS, int = DEFAULT_POINTS, int ffffffffff= DEFAULT_NUM_INST);
-    inline int getNumOfMaps(){return m_numMaps;};
+    //inline int getNumOfMaps(){return m_numMaps;};
     inline int getNumOfPoints(){return m_numPoints;};
     inline int setNumOfPoints(int num){return m_numPoints = num;};
 

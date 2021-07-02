@@ -21,10 +21,10 @@ CUDALIB		= -L/usr/lib/x86_64-linux-gnu -L$(CUDA)/lib64 \
 GLLIB  		= -lGL -lGLU -lGLEW -lglfw
 QTLIB			= -lQt5Core
 OTHERLIB	= -lfreeimage -lstdc++fs 
-LIB 			= $(CUDALIB) $(GLLIB) -lm -lstb
+LIB 			= $(CUDALIB) $(GLLIB) -lm -lstb -lpng -L. -lspng
 
-GLLIBEGL	= -lEGL -lGLEW  -lOpenGL
-LIBEGL		= -Lglew/lib $(CUDALIB) $(GLLIBEGL) -lm -lstb
+GLLIBEGL	= -lEGL -lGLEW  -lOpenGL 
+LIBEGL		= -Lglew/lib $(CUDALIB) $(GLLIBEGL) -lm -lstb -lpng
 
 ################ Choosing architecture code for GPU ############################
 NVCC_ARCH			=
@@ -35,13 +35,12 @@ ifeq ("$(HOSTNAME)","Edgar-PC")
 endif
 
 ###############	Debug, 0 -> False,  1-> True
-DEBUGON						:= 0
+DEBUGON						:= 1
 
 ifeq (1,$(DEBUGON))
 	CXXDEBUG 				:= -g -Wall
 	CXXOPT					:= -O0 -std=c++17
-#	NVCCDEBUG				:= -g -pg -G -fPIC -std=c++17
-	NVCCDEBUG				:= 
+	NVCCDEBUG				:= -g -pg -G -std=c++17
 	NVCCOPT					:= -O0
 	NVCCFLAGSXCOMP 	:= -Xcompiler -g,-Wall,-O0 	
 else
@@ -73,7 +72,7 @@ fracGPU : main.o $(OBJLIST)
 main.o: Main.cpp Defs.hpp
 	$(CXX) $(CXXFLAGS) $(INC) $(CUDAINC) -c $< -o $@ 
 
-Accel.o: Accel.cu
+Accel.o: Accel.cu Accel.cuh
 	$(NVCC) $(NVCCFLAGS) $(NVCCFLAGSXCOMP) $(INC) $(CUDAINC) $< -o $@ 
 
 WindowGL.o: WindowGL.cpp WindowGL.hpp 
@@ -93,6 +92,9 @@ shader.o: shader.cpp shader.hpp
 	
 texture.o: texture.cpp texture.hpp
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@	
+
+#spng.o: spng.c spng.h
+#	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@	
 
 #---------------------------- EGL -------------------------------------------
 OBJLISTEGL = shaderEGL.o text2DEGL.o textureEGL.o AccelEGL.o WindowGLEGL.o RenderEGL.o FractalEGL.o
@@ -123,6 +125,7 @@ shaderEGL.o: shader.cpp shader.hpp
 	
 textureEGL.o: texture.cpp texture.hpp
 	$(CXX) $(CXXFLAGSEGL) $(INCEGL) -c $< -o $@	
+
 
 
 clean:

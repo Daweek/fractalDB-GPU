@@ -136,11 +136,11 @@ void Render::drawALL(Settings cnfg){
 	float l,r,b,t;
 	float padding = 0.0;
 
-	l = m_pGpu->m_fXmin + padding;
-	r = m_pGpu->m_fXmax + padding;
+	l = m_pGpu->m_fXmin[0] + padding;
+	r = m_pGpu->m_fXmax[0] + padding;
 
-	b = m_pGpu->m_fYmin + padding;
-	t = m_pGpu->m_fYmax + padding;
+	b = m_pGpu->m_fYmin[0] + padding;
+	t = m_pGpu->m_fYmax[0] + padding;
 
 	glm::mat4 m4Projection	= glm::ortho(l,r,b,t);
 	float rot[2];
@@ -173,7 +173,7 @@ void Render::drawALL(Settings cnfg){
 	//cout<<"Rotation tipe: "<<rot[0]<<","<<rot[1]<<endl;
 	
 	// Drawing
-	int numMappings = m_pFrac->getNumOfMaps();
+	int numMappings = m_pFrac->m_numMaps[0];
 	glUseProgram(m_uiSimpleProgID);
 	glUniform1i(m_uNumMappings,numMappings);
 	glUniformMatrix4fv(m_uProjection, 1, GL_FALSE, &m4Projection[0][0]);
@@ -204,9 +204,9 @@ void Render::drawALL(Settings cnfg){
 	// Draw Fractals
 	{
 		
-		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_poss);
+		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_poss[0]);
 		glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE, 2 * sizeof(float),(void*)0);
-		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_color);
+		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_color[0]);
 		glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, 2 * sizeof(float),(void*)0);
 				
 		glEnableVertexAttribArray(0);
@@ -216,7 +216,7 @@ void Render::drawALL(Settings cnfg){
 
 		//glPointSize(20.0);
 		if(m_renderType == 1 || m_renderType == 3 )	glPointSize(3.0); //Patch configuration
-		else 								glPointSize(1.0); //Point configuration	
+		else 								glPointSize(10.0); //Point configuration	
 
 		glDrawArrays(GL_POINTS,0,m_pFrac->getNumOfPoints());
 		//glDrawArrays(GL_POINTS,0,10);
@@ -388,11 +388,61 @@ void Render::savePNGfromOpenGLbuffer(int count){
 	//glReadBuffer(GL_FRONT);
 	//glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
 	stbi_flip_vertically_on_write(true);
-	stbi_write_png(fileimg.c_str(), width-2, height-2, nrChannels, m_glFrameBuffer, stride);
+	stbi_write_png(fileimg.c_str(), width, height, nrChannels, m_glFrameBuffer, stride);
 
+	//////////////////////////////////////////// Test for PNG lib
+	string fileimg2 = m_outPathimg + "/" + s + "test.png";
+	
+	
 
-	//string fileimg2 = m_outPathimg + "/" + s + ".jpg";
+	/*
 	//stbi_write_jpg(fileimg2.c_str(), width, height, 3, m_glFrameBuffer, 100);
+	FILE *fp = fopen(fileimg2.c_str(), "wb");
+  if(!fp) abort();
+
+  png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (!png) abort();
+
+  png_infop info = png_create_info_struct(png);
+  if (!info) abort();
+
+  if (setjmp(png_jmpbuf(png))) abort();
+
+	int nvals = 3 * width * height;
+	png_byte *png_bytes  =(png_byte*) malloc (nvals * sizeof(png_byte));
+	png_byte *png_rows 	 =(png_byte*) malloc (height * sizeof(png_byte*));
+
+	for (int i = 0; i < nvals; i++)
+  	png_bytes[i] = m_glFrameBuffer[i];
+
+	for (int i = 0; i < height; i++)
+        png_rows[height - i - 1] = png_bytes[i * width * 3];
+
+	
+  png_init_io(png, fp);
+
+  // Output is 8bit depth, RGBA format.
+  png_set_IHDR(
+    png,
+    info,
+    width, height,
+    8,
+    PNG_COLOR_TYPE_RGB,
+    PNG_INTERLACE_NONE,
+    PNG_COMPRESSION_TYPE_DEFAULT,
+    PNG_FILTER_TYPE_DEFAULT
+  );
+  png_write_info(png, info);
+
+	png_write_image(png,*png_rows);
+
+	png_write_end(png, NULL);
+
+	fclose(fp);
+
+  png_destroy_write_struct(&png, &info);
+*/
+
 
 }
 
