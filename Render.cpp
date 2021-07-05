@@ -407,8 +407,8 @@ void Render::setRootDirParams(string dir, int nclass, float density){
 	m_outPathcsv = m_rootDir + "csv_density"+o.str()+"_Class"+p.str();
 	m_outPathimg = m_rootDir + "img_density"+o.str()+"_Class"+p.str();
 
-	filesystem::create_directory(m_outPathcsv);
-	filesystem::create_directory(m_outPathimg);
+	filesystem::create_directories(m_outPathcsv);
+	filesystem::create_directories(m_outPathimg);
 
 }
 
