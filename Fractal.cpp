@@ -181,7 +181,7 @@ void Fractal::loadWeightsFromCSV(){
 		ss<<setw(5)<<setfill('0')<<to_string(m_fileCount);
 		string s = ss.str();
 
-		string _path = "data/weights/weights_0.4.csv";
+		string _path = "weights/weights_0.4.csv";
 		//cout<<_path<<endl;
 
 		ifstream in(_path);
