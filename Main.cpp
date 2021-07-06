@@ -22,8 +22,11 @@ Fractal*						g_oFrac;
 Settings						g_sConfig;
 
 // Window
-unsigned int 				g_WinWidth  = 512;
-unsigned int 				g_WinHeight = 512;
+unsigned int 				g_WinWidth  = 256;
+unsigned int 				g_WinHeight = 256;
+
+unsigned int				g_renderW		= 256;
+unsigned int				g_renderH		= 256;
 
 // Strings
 const string cRenderType[] = {"GRAY","COLOR"};
@@ -153,7 +156,7 @@ int main(int argc, char **argv)
 
 	// Re-shape the framebuffer
 	//g_oWindow->resizeFrameBuffer(128,128);
-	g_oWindow->resizeFrameBuffer(512,512);
+	g_oWindow->resizeFrameBuffer(256,256);
 	//g_oWindow->resizeFrameBuffer(362,362);
 	//sleep(2);
 
@@ -208,7 +211,7 @@ int main(int argc, char **argv)
 		string s = ss.str();
 		cout<<"DB Class save: " << s << endl;	
 
-
+	#if 0
 	// Test
 	const int width = 362;
  	const int height = 362;
@@ -245,7 +248,7 @@ int main(int argc, char **argv)
 	
 	
 	delete[] pixels;
-
+	#endif
 	
 
 	}
