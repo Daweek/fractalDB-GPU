@@ -36,8 +36,6 @@ frac
 # Compiled Static libraries
 *.lai
 *.la
-*.a
-*.lib
 
 # Executables
 *.exe
@@ -75,6 +73,10 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/cuda,c++,vim
 
+#Directories
 data/
 data_Org/
 
+#Binaries
+fracGPU
+eglfracGPU
