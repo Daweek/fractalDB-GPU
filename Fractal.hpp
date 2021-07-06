@@ -48,8 +48,8 @@ class Fractal {
     int         m_numClass;
     int 				m_fileCount;
 
-    vector<mapping*> m_map; 
-    //mapping     *m_map[MAPS_GPU];
+    //vector<mapping*> m_map; 
+    mapping     *m_map[MAPS_GPU];
 
     void    initFractalParam(Settings cfg, int count);
     void    appendWeights(int count);

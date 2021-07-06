@@ -87,7 +87,7 @@ void WindowGL::generateRender(int w, int h){
 
 		// Callbacks for glfw and hints for window
 		//glfwSetWindowPos(m_pWinID,12,12);
-		glfwSetWindowPos(m_pWinID,5400,2100);
+		//glfwSetWindowPos(m_pWinID,5400,2100);
 		glfwSetWindowUserPointer(m_pWinID, this);
 		glfwSetKeyCallback(m_pWinID,keyboardCallback);
 		//glfwSetMouseButtonCallback(m_pWinID,mouseCallback);

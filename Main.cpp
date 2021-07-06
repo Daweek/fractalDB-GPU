@@ -22,8 +22,8 @@ Fractal*						g_oFrac;
 Settings						g_sConfig;
 
 // Window
-unsigned int 				g_WinWidth  = 512;
-unsigned int 				g_WinHeight = 512;
+unsigned int 				g_WinWidth  = 256;
+unsigned int 				g_WinHeight = 256;
 
 // Strings
 const string cRenderType[] = {"GRAY","COLOR"};
@@ -73,8 +73,8 @@ int main(int argc, char **argv)
 	// Fractal object settings
 	g_oFrac 	= new Fractal(g_oGPU, args["class"].as<int>(), args["npoints"].as<int>(),args["instances"].as<int>());
 
-	cout<<"Exit before rendering..."<<endl;
-	exit(0);
+	//cout<<"Exit before rendering..."<<endl;
+	//exit(0);
 	// Init GLFW and OpenGL
 	g_oWindow = new	WindowGL(g_WinWidth,g_WinHeight,g_oRender,g_oGPU,g_oFrac);
 		

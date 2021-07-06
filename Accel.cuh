@@ -71,8 +71,8 @@ class Accel {
 
 		Accel();
 		void fractalKernel(int numMappings[], int numPoints);
-		//void malloCUDA(mapping *mapped[MAPS_GPU], int numMaps[]);
-		void malloCUDA(std::vector<mapping*>& mapped, int numMaps[]);
+		void malloCUDA(mapping *mapped[MAPS_GPU], int numMaps[]);
+		//void malloCUDA(std::vector<mapping*>& mapped, int numMaps[]);
 		void interopCUDA();
 		~Accel();
 

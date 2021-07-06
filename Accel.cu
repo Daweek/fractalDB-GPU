@@ -335,18 +335,17 @@ void Accel::interopCUDA(){
 }
 
 
-//void Accel::malloCUDA(mapping *mapped[MAPS_GPU], int numMaps[]){
-void Accel::malloCUDA(std::vector<mapping*>& mapped, int numMaps[]){
+void Accel::malloCUDA(mapping *mapped[MAPS_GPU], int numMaps[]){
+//void Accel::malloCUDA(std::vector<mapping*>& mapped, int numMaps[]){
 
 	// For the parameters of the Fractals
 
-	
+	for(int k=0; k<MAPS_GPU ; k++){
 		if(d_map[0] != NULL)
 			checkCudaErrors(cudaFree(d_map[0]));
   	checkCudaErrors(cudaMalloc((void**)&d_map[0],numMaps[0]*sizeof(mapping)));
-  	checkCudaErrors(cudaMemcpy(d_map[k],mapped[k],numMaps[k]*sizeof(mapping),cudaMemcpyHostToDevice));
-	
-	for(int k=0; k<MAPS_GPU ; k++){
+  	checkCudaErrors(cudaMemcpy(d_map[0],mapped[0],numMaps[0]*sizeof(mapping),cudaMemcpyHostToDevice));
+		
 		// To check borders
 		if(d_borders[k] != NULL)
 			checkCudaErrors(cudaFree(d_borders[k]));

@@ -10,7 +10,7 @@ Fractal::Fractal(Accel*& gpu, int numClass, int numPoints, int numInstances){
    
 	// Cleaning main variables
 	//for(int i=0; i<MAPS_GPU; i++)
-		m_map = NULL;
+	//m_map = NULL;
 
 	m_weights = NULL;
   //m_numMaps = 0;
