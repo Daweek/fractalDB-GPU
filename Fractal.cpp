@@ -9,7 +9,7 @@
 Fractal::Fractal(Accel*& gpu, int numClass, int numPoints, int numInstances){
    
 	// Cleaning main variables
-  m_map = NULL;
+  //m_map = NULL;
 	m_weights = NULL;
   m_numMaps = 0;
   m_pGPU = gpu;
@@ -76,10 +76,10 @@ void Fractal::paramGenFromFile(int count){
 	m_numMaps = param_size;
 	//std::cout<<"Param_size:"<<param_size<<std::endl;
 
-	if(m_map != NULL)
-		free(m_map);
+	if(m_pGPU->m_fk[0].h_map != NULL)
+		free(m_pGPU->m_fk[0].h_map);
 
-	m_map = (mapping*)malloc(param_size * sizeof(mapping));
+	m_pGPU->m_fk[0].h_map = (mapping*)malloc(param_size * sizeof(mapping));
 	
 	//cout<<"Original from file CSV"<<endl;
 	for (int i=0;i <param_size;i++){
@@ -95,7 +95,7 @@ void Fractal::paramGenFromFile(int count){
 		f = fields[i][5];
 		prob = fields[i][6];
 	
-		m_map[i] = {a, b, c, d, e, f, prob};
+		m_pGPU->m_fk[0].h_map[i] = {a, b, c, d, e, f, prob};
 		/*
 		cout<<m_map[i].a<<","<<
 					m_map[i].b<<","<<
@@ -194,7 +194,11 @@ void Fractal::paramGenRandom(){
 	//cout<<"Param_size:"<<param_size<<std::endl;
 	m_numMaps = param_size;
 
-	m_map = (mapping*)malloc(param_size * sizeof(mapping));
+	//m_map = (mapping*)malloc(param_size * sizeof(mapping));
+	if(m_pGPU->m_fk[0].h_map != NULL)
+		free(m_pGPU->m_fk[0].h_map);
+
+	m_pGPU->m_fk[0].h_map = (mapping*)malloc(param_size * sizeof(mapping));
 
 	for (int i=0;i <param_size;i++){
 		
@@ -210,12 +214,12 @@ void Fractal::paramGenRandom(){
 		prob = abs(a*d - b*c);
 		sum_proba += prob;
 
-		m_map[i] = { a, b, c, d, e, f, prob};
+		m_pGPU->m_fk[0].h_map[i] = { a, b, c, d, e, f, prob};
 		//cout<<m_map[i].x<<endl;
 	}
 
 	for (int i=0;i <param_size;i++){
-		m_map[i].p /= sum_proba;
+		m_pGPU->m_fk[0].h_map[i].p /= sum_proba;
 		//cout<<m_map[i].p<<endl;
 	}
 
@@ -228,12 +232,12 @@ void Fractal::appendWeights(int count){
 
 	for (int i=0;i < param_size;i++){
 		
-		m_map[i].a *= m_weights[count].wa;
-		m_map[i].b *= m_weights[count].wb;
-		m_map[i].c *= m_weights[count].wc;
-		m_map[i].d *= m_weights[count].wd;
-		m_map[i].x *= m_weights[count].we;
-		m_map[i].y *= m_weights[count].wf;
+		m_pGPU->m_fk[0].h_map[i].a *= m_weights[count].wa;
+		m_pGPU->m_fk[0].h_map[i].b *= m_weights[count].wb;
+		m_pGPU->m_fk[0].h_map[i].c *= m_weights[count].wc;
+		m_pGPU->m_fk[0].h_map[i].d *= m_weights[count].wd;
+		m_pGPU->m_fk[0].h_map[i].x *= m_weights[count].we;
+		m_pGPU->m_fk[0].h_map[i].y *= m_weights[count].wf;
 		
 		/*
 		cout<<m_map[i].a<<","<<
@@ -271,6 +275,7 @@ void Fractal::generateFractal(){
 
 Fractal::~Fractal(){
 
-  free(m_map);
+  if(m_pGPU->m_fk[0].h_map != NULL)
+		free(m_pGPU->m_fk[0].h_map);
 
 }

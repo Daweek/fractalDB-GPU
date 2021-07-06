@@ -136,11 +136,11 @@ void Render::drawALL(Settings cnfg){
 	float l,r,b,t;
 	float padding = 0.0;
 
-	l = m_pGpu->m_fXmin + padding;
-	r = m_pGpu->m_fXmax + padding;
+	l = m_pGpu->m_fk[0].fXmin + padding;
+	r = m_pGpu->m_fk[0].fXmax + padding;
 
-	b = m_pGpu->m_fYmin + padding;
-	t = m_pGpu->m_fYmax + padding;
+	b = m_pGpu->m_fk[0].fYmin + padding;
+	t = m_pGpu->m_fk[0].fYmax + padding;
 
 	glm::mat4 m4Projection	= glm::ortho(l,r,b,t);
 	float rot[2];
@@ -183,30 +183,13 @@ void Render::drawALL(Settings cnfg){
 	
 
 	// Draw Fractals
-	#if 0
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_mapVBO);
-		glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE, 4 * sizeof(float),(void*)0);
-		glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, 4 * sizeof(float),(void*)(2*sizeof(float)));
-		
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		glPointSize(1.0);
-		glDrawArrays(GL_POINTS,0,m_pFrac->getNumOfPoints());
-		
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		
-	}
-	#else
-
+	
 	// Draw Fractals
 	{
 		
-		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_poss);
+		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->m_fk[0].g_poss);
 		glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE, 2 * sizeof(float),(void*)0);
-		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->g_color);
+		glBindBuffer(GL_ARRAY_BUFFER, m_pGpu->m_fk[0].g_color);
 		glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, 2 * sizeof(float),(void*)0);
 				
 		glEnableVertexAttribArray(0);
@@ -232,7 +215,6 @@ void Render::drawALL(Settings cnfg){
 		
 	}
 	
-	#endif
 }
 
 void Render::renderToNormal(Settings cnfg){
@@ -279,12 +261,12 @@ void Render::renderToFBO(Settings cnfg){
 	glDrawArrays(GL_TRIANGLES, 0, 6); // 2*3 indices starting at 0 -> 2 triangles
 }
 
-void Render::write_paramsto_csv( mapping *m, int numMaps, int count){
+void Render::write_paramsto_csv( int numMaps, int count){
     // Make a CSV file with one column of integer values
     // filename - the name of the file
     // colname - the name of the one and only column
     // vals - an integer vector of values
-
+		mapping *m = m_pGpu->m_fk[0].h_map;
 		// Write parameters to CSV
 		stringstream ss;
 		ss<<setw(5)<<setfill('0')<<to_string(count);

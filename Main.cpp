@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 			if(g_oRender->m_bGenFrac){
 				//do{
 					g_oFrac->initFractalParam(g_sConfig,count);
-					g_oGPU->malloCUDA(g_oFrac->m_map, g_oFrac->getNumOfMaps());
+					g_oGPU->malloCUDA(g_oFrac->getNumOfMaps());
 					g_oFrac->generateFractal();
 					g_oWindow->renderScene(g_sConfig);
 					glfwPollEvents();
@@ -132,14 +132,14 @@ int main(int argc, char **argv)
 	while(count < g_oFrac->m_numClass){
 		do{
 					g_oFrac->initFractalParam(g_sConfig,count);
-					g_oGPU->malloCUDA(g_oFrac->m_map, g_oFrac->getNumOfMaps());
+					g_oGPU->malloCUDA(g_oFrac->getNumOfMaps());
 					g_oFrac->generateFractal();
 					g_oWindow->renderScene(g_sConfig);
 					//g_oFrac->m_fileCount++;
 		}while(g_oRender->numPixel() < 0.2);
 
 		//cout<<filecsv<<endl;
-		g_oRender->write_paramsto_csv(g_oFrac->m_map,g_oFrac->getNumOfMaps(),count);
+		g_oRender->write_paramsto_csv(g_oFrac->getNumOfMaps(),count);
 					
 		//cout<<fileimg<<endl;
 		g_oRender->savePNGfromOpenGLbuffer(count);
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 				g_oRender->setRootDirDataSet("data/",g_oFrac->m_numClass,nclass,g_sConfig);
 				g_oFrac->initFractalParam(g_sConfig,nclass);
 				g_oFrac->appendWeights(nweights);
-				g_oGPU->malloCUDA(g_oFrac->m_map, g_oFrac->getNumOfMaps());
+				g_oGPU->malloCUDA(g_oFrac->getNumOfMaps());
 				g_oFrac->generateFractal();
 				//cout<<"Weights: "<<nweights<<endl;
 				//sleep(2000); 

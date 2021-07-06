@@ -48,8 +48,7 @@ class Fractal {
     weights     *m_weights;
     int         m_numClass;
     int 				m_fileCount;
-    mapping     *m_map;
-
+    
     void    initFractalParam(Settings cfg, int count);
     void    appendWeights(int count);
     void    generateFractal();

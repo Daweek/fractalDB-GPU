@@ -40,8 +40,7 @@ DEBUGON						:= 0
 ifeq (1,$(DEBUGON))
 	CXXDEBUG 				:= -g -Wall
 	CXXOPT					:= -O0 -std=c++17
-#	NVCCDEBUG				:= -g -pg -G -fPIC -std=c++17
-	NVCCDEBUG				:= 
+	NVCCDEBUG				:= -g -pg -G -std=c++17
 	NVCCOPT					:= -O0
 	NVCCFLAGSXCOMP 	:= -Xcompiler -g,-Wall,-O0 	
 else
@@ -73,7 +72,7 @@ fracGPU : main.o $(OBJLIST)
 main.o: Main.cpp Defs.hpp
 	$(CXX) $(CXXFLAGS) $(INC) $(CUDAINC) -c $< -o $@ 
 
-Accel.o: Accel.cu
+Accel.o: Accel.cu Accel.cuh
 	$(NVCC) $(NVCCFLAGS) $(NVCCFLAGSXCOMP) $(INC) $(CUDAINC) $< -o $@ 
 
 WindowGL.o: WindowGL.cpp WindowGL.hpp 

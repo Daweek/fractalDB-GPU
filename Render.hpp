@@ -95,7 +95,7 @@ class Render{
 		void		setRootDirDataSet(string dir, int nclass, int count, Settings s);
 		
 		float   numPixel();
-		void 		write_paramsto_csv(mapping *m, int numMaps,int count);
+		void 		write_paramsto_csv(int numMaps,int count);
 		void		savePNGfromOpenGLbuffer(int count);
 		void		resizeGLbuffer(int w, int h);
 		
