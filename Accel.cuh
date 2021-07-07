@@ -69,7 +69,7 @@ class Accel {
 		float  		m_kernel_mili; 
 		
 	public:
-		fraktal m_fk[1];
+		fraktal m_fk[NF];
 		float		m_fFlops;
 		float		m_fStepsec;
 

@@ -21,6 +21,7 @@
 #define DEFAULT_NUM_CLASS 10
 #define DEFAULT_NUM_INST	1
 #define MAX_POINTS 5*1000*1000 // 5 000 000
+#define NF 4
 
 using namespace std;
 

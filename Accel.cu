@@ -175,36 +175,26 @@ Accel::Accel() {
 	printf(".........................................................\t\n\n");
 
 	// Start the Fractal structure
-	m_fk[0].g_strucPoss = NULL;	
-	m_fk[0].g_strucColor = NULL;
-	m_fk[0].d_glPoss = NULL;
-	m_fk[0].d_glColor = NULL;
-	
-	m_fk[0].d_borders = NULL;
-	m_fk[0].h_borders = NULL;
+	for (int k=0; k< NF; k++){
 
-	m_fk[0].fXmin = 0.0;
-	m_fk[0].fXmax = 0.0;
-	m_fk[0].fYmin = 0.0;
-	m_fk[0].fYmax = 0.0;
-
-	m_fk[0].d_mutex = NULL;
-
-	m_fk[0].d_map = NULL;
-	m_fk[0].h_map	= NULL;
-
-	// Setting up all pointers
-	//d_glColor = NULL;
-	//d_glPoss = NULL;
-	//d_map		= NULL;
-	//d_borders = NULL;
-	//h_borders = NULL;
-	//d_mutex = NULL;
+		m_fk[k].g_strucPoss = NULL;	
+		m_fk[k].g_strucColor = NULL;
+		m_fk[k].d_glPoss = NULL;
+		m_fk[k].d_glColor = NULL;
 		
-	// CUDA related structs
-	//g_strucColor  = NULL;
-	//g_strucPoss = NULL;
+		m_fk[k].d_borders = NULL;
+		m_fk[k].h_borders = NULL;
 
+		m_fk[k].fXmin = 0.0;
+		m_fk[k].fXmax = 0.0;
+		m_fk[k].fYmin = 0.0;
+		m_fk[k].fYmax = 0.0;
+
+		m_fk[k].d_mutex = NULL;
+
+		m_fk[k].d_map = NULL;
+		m_fk[k].h_map	= NULL;
+	}
 	// Timer related
 	m_fFlops = m_fStepsec = 0.0f;
 
@@ -220,32 +210,34 @@ void Accel::interopCUDA(){
 	std::cout<<"Seting up CUDA-OpenGL buffer...\n\n";
   // Prepare graphics interoperability
 
-	if(m_fk[0].g_strucPoss != NULL) 
-		checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[0].g_strucPoss));
+	for (int k=0; k< NF; k++){
+		if(m_fk[k].g_strucPoss != NULL) 
+			checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[k].g_strucPoss));
 
-	if(m_fk[0].g_strucColor != NULL) 
-		checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[0].g_strucColor));
+		if(m_fk[k].g_strucColor != NULL) 
+			checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[k].g_strucColor));
 
-	glDeleteBuffers(1,&m_fk[0].g_poss);
-	glDeleteBuffers(1,&m_fk[0].g_color);
+		glDeleteBuffers(1,&m_fk[k].g_poss);
+		glDeleteBuffers(1,&m_fk[k].g_color);
 
-  // Creation of share buffer between CUDA and OpenGL
+		// Creation of share buffer between CUDA and OpenGL
 
-	glGenBuffers(1, &m_fk[0].g_poss);
-  glBindBuffer(GL_ARRAY_BUFFER, m_fk[0].g_poss);
-  unsigned int sizeP = MAX_POINTS * 2 * sizeof(float);
-  glBufferData(GL_ARRAY_BUFFER, sizeP, 0, GL_DYNAMIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glGenBuffers(1, &m_fk[k].g_poss);
+		glBindBuffer(GL_ARRAY_BUFFER, m_fk[k].g_poss);
+		unsigned int sizeP = MAX_POINTS * 2 * sizeof(float);
+		glBufferData(GL_ARRAY_BUFFER, sizeP, 0, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glGenBuffers(1, &m_fk[0].g_color);
-  glBindBuffer(GL_ARRAY_BUFFER, m_fk[0].g_color);
-  unsigned int sizeC = MAX_POINTS * 2 * sizeof(float);
-  glBufferData(GL_ARRAY_BUFFER, sizeC, 0, GL_DYNAMIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glGenBuffers(1, &m_fk[k].g_color);
+		glBindBuffer(GL_ARRAY_BUFFER, m_fk[k].g_color);
+		unsigned int sizeC = MAX_POINTS * 2 * sizeof(float);
+		glBufferData(GL_ARRAY_BUFFER, sizeC, 0, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Register CUDA and OpenGL Interop
-	checkCudaErrors(cudaGraphicsGLRegisterBuffer(&m_fk[0].g_strucPoss,m_fk[0].g_poss,cudaGraphicsMapFlagsNone));
-	checkCudaErrors(cudaGraphicsGLRegisterBuffer(&m_fk[0].g_strucColor,m_fk[0].g_color,cudaGraphicsMapFlagsNone));
+		// Register CUDA and OpenGL Interop
+		checkCudaErrors(cudaGraphicsGLRegisterBuffer(&m_fk[k].g_strucPoss,m_fk[k].g_poss,cudaGraphicsMapFlagsNone));
+		checkCudaErrors(cudaGraphicsGLRegisterBuffer(&m_fk[k].g_strucColor,m_fk[k].g_color,cudaGraphicsMapFlagsNone));
+	}
 
 }
 
@@ -253,26 +245,29 @@ void Accel::interopCUDA(){
 void Accel::malloCUDA(int numMaps){
 
 	// For params of fractals
-	if(m_fk[0].d_map != NULL)
-		checkCudaErrors(cudaFree(m_fk[0].d_map));
-  checkCudaErrors(cudaMalloc((void**)&m_fk[0].d_map,numMaps*sizeof(mapping)));
-  checkCudaErrors(cudaMemcpy(m_fk[0].d_map,m_fk[0].h_map,numMaps*sizeof(mapping),cudaMemcpyHostToDevice));
+	for (int k=0; k< NF; k++){
 
-	// To check borders
-	if(m_fk[0].d_borders != NULL)
-		checkCudaErrors(cudaFree(m_fk[0].d_borders));
-	cudaMalloc((void**)&m_fk[0].d_borders,sizeof(float4));
-	cudaMemset(m_fk[0].d_borders,0, sizeof(float4));
+		if(m_fk[k].d_map != NULL)
+			checkCudaErrors(cudaFree(m_fk[k].d_map));
+		checkCudaErrors(cudaMalloc((void**)&m_fk[k].d_map,numMaps*sizeof(mapping)));
+		checkCudaErrors(cudaMemcpy(m_fk[k].d_map,m_fk[k].h_map,numMaps*sizeof(mapping),cudaMemcpyHostToDevice));
 
-	if(m_fk[0].d_mutex != NULL)
-		checkCudaErrors(cudaFree(m_fk[0].d_mutex));
-	cudaMalloc((void**)&m_fk[0].d_mutex,sizeof(int));
-	cudaMemset(m_fk[0].d_mutex, 0, sizeof(int));
+		// To check borders
+		if(m_fk[k].d_borders != NULL)
+			checkCudaErrors(cudaFree(m_fk[k].d_borders));
+		cudaMalloc((void**)&m_fk[k].d_borders,sizeof(float4));
+		cudaMemset(m_fk[k].d_borders,0, sizeof(float4));
+
+		if(m_fk[k].d_mutex != NULL)
+			checkCudaErrors(cudaFree(m_fk[k].d_mutex));
+		cudaMalloc((void**)&m_fk[k].d_mutex,sizeof(int));
+		cudaMemset(m_fk[k].d_mutex, 0, sizeof(int));
 
 
-	if(m_fk[0].h_borders != NULL)
-		free(m_fk[0].h_borders);
-	m_fk[0].h_borders = (float*)malloc(4*sizeof(float)); 
+		if(m_fk[k].h_borders != NULL)
+			free(m_fk[k].h_borders);
+		m_fk[k].h_borders = (float*)malloc(4*sizeof(float));
+	} 
 
 }
 
@@ -283,43 +278,45 @@ void Accel::fractalKernel(int numMappings, int numPoints){
 
   size_t mapsizevbo;
 
-  checkCudaErrors(cudaGraphicsMapResources(1,&m_fk[0].g_strucPoss,0));
-  checkCudaErrors(cudaGraphicsResourceGetMappedPointer((void**)&m_fk[0].d_glPoss,&mapsizevbo,m_fk[0].g_strucPoss));
+	for (int k=0; k< NF; k++){
+		checkCudaErrors(cudaGraphicsMapResources(1,&m_fk[k].g_strucPoss,0));
+		checkCudaErrors(cudaGraphicsResourceGetMappedPointer((void**)&m_fk[k].d_glPoss,&mapsizevbo,m_fk[k].g_strucPoss));
 
-	checkCudaErrors(cudaGraphicsMapResources(1,&m_fk[0].g_strucColor,0));
-  checkCudaErrors(cudaGraphicsResourceGetMappedPointer((void**)&m_fk[0].d_glColor,&mapsizevbo,m_fk[0].g_strucColor));
-  
+		checkCudaErrors(cudaGraphicsMapResources(1,&m_fk[k].g_strucColor,0));
+		checkCudaErrors(cudaGraphicsResourceGetMappedPointer((void**)&m_fk[k].d_glColor,&mapsizevbo,m_fk[k].g_strucColor));
+	}
   cudaEvent_t start, stop;
   checkCudaErrors( cudaEventCreate(&start) );
   checkCudaErrors( cudaEventCreate(&stop) );
   
   checkCudaErrors( cudaEventRecord(start) );
   
-	
-	// Compute Fractal
-		kernel_2<<<m_numBlocks, m_blockSize, numMappings * sizeof(mapping)>>>
-    	((float2*)m_fk[0].d_glPoss,(float2*)m_fk[0].d_glColor , numPoints, m_fk[0].d_map, numMappings);
+	for (int k=0; k< NF; k++){
+		// Compute Fractal
+			kernel_2<<<m_numBlocks, m_blockSize, numMappings * sizeof(mapping)>>>
+				((float2*)m_fk[k].d_glPoss,(float2*)m_fk[k].d_glColor , numPoints, m_fk[k].d_map, numMappings);
+				
+				
 			
-			
+		// Compute Borders of the fractal
 		
-	// Compute Borders of the fractal
-	
-	dim3 gridSize = 256;
-	dim3 blockSize = 256;
+		dim3 gridSize = 256;
+		dim3 blockSize = 256;
 
-	cudaMemset(m_fk[0].d_mutex, 0, sizeof(int));
+		cudaMemset(m_fk[k].d_mutex, 0, sizeof(int));
 
-  
-		find_borders_kernel<<< gridSize, blockSize >>>
-			((float2*)m_fk[0].d_glPoss,m_fk[0].d_borders, m_fk[0].d_mutex, (unsigned int)numPoints);
-		   
-	checkCudaErrors(cudaMemcpy(m_fk[0].h_borders, m_fk[0].d_borders, sizeof(float4), cudaMemcpyDeviceToHost));
+		
+			find_borders_kernel<<< gridSize, blockSize >>>
+				((float2*)m_fk[k].d_glPoss,m_fk[k].d_borders, m_fk[k].d_mutex, (unsigned int)numPoints);
+				
+		checkCudaErrors(cudaMemcpy(m_fk[k].h_borders, m_fk[k].d_borders, sizeof(float4), cudaMemcpyDeviceToHost));
+		checkCudaErrors( cudaDeviceSynchronize() );
 
-	m_fk[0].fXmax = m_fk[0].h_borders[0];
-	m_fk[0].fYmax = m_fk[0].h_borders[1];
-	m_fk[0].fXmin = m_fk[0].h_borders[2];
-	m_fk[0].fYmin = m_fk[0].h_borders[3];
-	
+		m_fk[k].fXmax = m_fk[k].h_borders[0];
+		m_fk[k].fYmax = m_fk[k].h_borders[1];
+		m_fk[k].fXmin = m_fk[k].h_borders[2];
+		m_fk[k].fYmin = m_fk[k].h_borders[3];
+	}
 	/*
 		cout<<"Maximum X found on gpu was: "<<m_fXmax<<endl;
 		cout<<"Maximum Y found on gpu was: "<<m_fYmax<<endl;
@@ -339,26 +336,30 @@ void Accel::fractalKernel(int numMappings, int numPoints){
   checkCudaErrors( cudaEventElapsedTime(&m_kernel_mili, start, stop) );
 
   // Unmap OpenGL resources
-	checkCudaErrors(cudaGraphicsUnmapResources(1,&m_fk[0].g_strucPoss,0));
-	checkCudaErrors(cudaGraphicsUnmapResources(1,&m_fk[0].g_strucColor,0));
-	
+	for (int k=0; k< NF; k++){
+		checkCudaErrors(cudaGraphicsUnmapResources(1,&m_fk[k].g_strucPoss,0));
+		checkCudaErrors(cudaGraphicsUnmapResources(1,&m_fk[k].g_strucColor,0));
+	}
 }
 
 Accel::~Accel() {
 	// Unregister if CUDA-InteropGL
 	std::cout<<"Unregistering CUDA-GL Resources...\n";
 
-	if(m_fk[0].g_strucPoss != NULL) 
-		checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[0].g_strucPoss));
+	for (int k=0; k < NF; k++){
 
-	if(m_fk[0].g_strucColor != NULL) 
-		checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[0].g_strucColor));
-	
-	if(m_fk[0].h_borders != NULL)
-		free(m_fk[0].h_borders);
+		if(m_fk[k].g_strucPoss != NULL) 
+			checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[k].g_strucPoss));
 
-	if(m_fk[0].d_map != NULL)
-		checkCudaErrors(cudaFree(m_fk[0].d_map));
+		if(m_fk[k].g_strucColor != NULL) 
+			checkCudaErrors(cudaGraphicsUnregisterResource(m_fk[k].g_strucColor));
+		
+		if(m_fk[k].h_borders != NULL)
+			free(m_fk[k].h_borders);
+
+		if(m_fk[k].d_map != NULL)
+			checkCudaErrors(cudaFree(m_fk[k].d_map));
+	}
 	// Free memory for HALF interop
 	//delete [] m_fPossVBO;
 }

@@ -195,33 +195,38 @@ void Fractal::paramGenRandom(){
 	m_numMaps = param_size;
 
 	//m_map = (mapping*)malloc(param_size * sizeof(mapping));
-	if(m_pGPU->m_fk[0].h_map != NULL)
-		free(m_pGPU->m_fk[0].h_map);
+	for (int k=0; k< NF; k++){
 
-	m_pGPU->m_fk[0].h_map = (mapping*)malloc(param_size * sizeof(mapping));
+		if(m_pGPU->m_fk[k].h_map != NULL)
+			free(m_pGPU->m_fk[k].h_map);
 
-	for (int i=0;i <param_size;i++){
+		m_pGPU->m_fk[k].h_map = (mapping*)malloc(param_size * sizeof(mapping));
+
+		for (int i=0;i <param_size;i++){
+			
+			a = b = c = d = e = f = 0.0f;
 		
-		a = b = c = d = e = f = 0.0f;
-	
-		a = dis(gen);
-		b = dis(gen);
-		c = dis(gen);
-		d = dis(gen);
-		e = dis(gen);
-		f = dis(gen);
+			a = dis(gen);
+			b = dis(gen);
+			c = dis(gen);
+			d = dis(gen);
+			e = dis(gen);
+			f = dis(gen);
 
-		prob = abs(a*d - b*c);
-		sum_proba += prob;
+			prob = abs(a*d - b*c);
+			sum_proba += prob;
 
-		m_pGPU->m_fk[0].h_map[i] = { a, b, c, d, e, f, prob};
-		//cout<<m_map[i].x<<endl;
+			m_pGPU->m_fk[k].h_map[i] = { a, b, c, d, e, f, prob};
+			//cout<<m_map[i].x<<endl;
+		}
+
+		for (int i=0;i <param_size;i++){
+			m_pGPU->m_fk[k].h_map[i].p /= sum_proba;
+			//cout<<m_map[i].p<<endl;
+		}
+
 	}
 
-	for (int i=0;i <param_size;i++){
-		m_pGPU->m_fk[0].h_map[i].p /= sum_proba;
-		//cout<<m_map[i].p<<endl;
-	}
 
 }
 
@@ -275,7 +280,9 @@ void Fractal::generateFractal(){
 
 Fractal::~Fractal(){
 
-  if(m_pGPU->m_fk[0].h_map != NULL)
-		free(m_pGPU->m_fk[0].h_map);
+	for (int k=0; k< NF; k++){
+  	if(m_pGPU->m_fk[k].h_map != NULL)
+			free(m_pGPU->m_fk[k].h_map);
+	}
 
 }

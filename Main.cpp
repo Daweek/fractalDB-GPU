@@ -22,8 +22,8 @@ Fractal*						g_oFrac;
 Settings						g_sConfig;
 
 // Window
-unsigned int 				g_WinWidth  = 256;
-unsigned int 				g_WinHeight = 256;
+unsigned int 				g_WinWidth  = 512;
+unsigned int 				g_WinHeight = 512;
 
 unsigned int				g_renderW		= 256;
 unsigned int				g_renderH		= 256;
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	g_oRender->setRootDirParams("data/",g_oFrac->m_numClass,0.2f);
 
 	// For Debuggin purposes
-	#if 0
+	#if 1
 		int count = 0;  
 		while (g_oWindow->continueRender() && !glfwWindowShouldClose(g_oWindow->m_pWinID)){
 
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 
 	// Re-shape the framebuffer
 	//g_oWindow->resizeFrameBuffer(128,128);
-	g_oWindow->resizeFrameBuffer(256,256);
+	g_oWindow->resizeFrameBuffer(g_renderW,g_renderH);
 	//g_oWindow->resizeFrameBuffer(362,362);
 	//sleep(2);
 
