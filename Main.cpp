@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	g_oRender->setRootDirParams("data/",g_oFrac->m_numClass,0.2f);
 
 	// For Debuggin purposes
-	#if 1
+	#if 0
 		int count = 0;  
 		while (g_oWindow->continueRender() && !glfwWindowShouldClose(g_oWindow->m_pWinID)){
 
