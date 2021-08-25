@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 		("i,instances", "Number of instances per Class... E.g. 1 create 100, 10 create 1,000", cxxopts::value<int>()->default_value("1"))
 		("n,npoints","Number of points for to search fractal", cxxopts::value<int>()->default_value("100000"))
 		("r,color", "Render type, if not set will render to gray", cxxopts::value<bool>()->default_value("false"))
-		("p,patch", "Render filter, if not set render with pixel-points", cxxopts::value<bool>()->default_value("false"))
+		("p,patch", "Render filter, if not set render with pixel-points", cxxopts::value<bool>()->default_value("True"))
 		("d,dir", "Directory for data (Params and DataBase) creation", cxxopts::value<std::string>()->default_value(""))
 		("xrp", "Resolution for parameters search", cxxopts::value<int>()->default_value("256"))
 		("xrdb", "Resolution for DataBase creation", cxxopts::value<int>()->default_value("256"))
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	cout<<"Render filter type:"<<cRenderFilter[g_sConfig.rf]<<endl;
 	cout<<"Directory for Data: "<<cDir<<endl<<endl;
 	cout<<"Parameters search resolution: "<<g_WinWidth<<"x"<<g_WinHeight<<endl;
-	cout<<"Parameters search resolution: "<<g_renderW<<"x"<<g_renderH<<endl;
+	cout<<"Parameters render resolution: "<<g_renderW<<"x"<<g_renderH<<endl;
 	
 
 
