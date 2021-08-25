@@ -99,48 +99,7 @@ int main(int argc, char **argv)
 	//g_oRender->setRootDirParams("data/",g_oFrac->m_numClass,0.2f);
 	g_oRender->setRootDirParams(cDir,g_oFrac->m_numClass,0.2f);
 
-	// For Debuggin purposes
-	#if 0
-		int count = 0;  
-		while (g_oWindow->continueRender() && !glfwWindowShouldClose(g_oWindow->m_pWinID)){
-
-			if(g_oRender->m_bGenFrac){
-				//do{
-					g_oFrac->initFractalParam(g_sConfig,count);
-					g_oGPU->malloCUDA(g_oFrac->getNumOfMaps());
-					g_oFrac->generateFractal();
-					g_oWindow->renderScene(g_sConfig);
-					glfwPollEvents();
-				//}while(g_oRender->numPixel() < 0.02);
-
-				// Write parameters to CSV
-				//stringstream ss;
-				//ss<<setw(5)<<setfill('0')<<to_string(num);
-				//string s = ss.str();
-				//cout<<s<<endl;
-
-				//string filecsv = outPathcsv +"/" + s + ".csv";
-				//cout<<filecsv<<endl;
-				//g_oRender->write_paramsto_csv(filecsv,g_oFrac->m_map,g_oFrac->getNumOfMaps());
-							
-				//string fileimg = outPathimg + "/" + s + ".png";
-				//cout<<fileimg<<endl;
-				//g_oRender->savePNGfromOpenGLbuffer(fileimg.c_str(),g_oWindow->m_pWinID);
-
-				//cout<<"save: " << s << endl;
-				//num++;
-
-				g_oRender->m_bGenFrac	= false;
-			}
-
-			//if(g_oWindow->pauseSimulation() == false)
-				//g_oFrac->generateFractal();
-			glfwPollEvents();
-			//g_oWindow->renderScene(g_sConfig);
-			
-		}
-
-	#else
+	
 	// ############################################################################## PARAMS
 	int count = 0;
 	// Always search for the params in Point-Gray
@@ -225,49 +184,7 @@ int main(int argc, char **argv)
 		ss<<setw(5)<<setfill('0')<<to_string(nclass);
 		string s = ss.str();
 		cout<<"DB Class save: " << s << endl;	
-
-	#if 0
-	// Test
-	const int width = 362;
- 	const int height = 362;
-	#define CHANNEL_NUM 3
-
-	/*** NOTICE!! You have to use uint8_t array to pass in stb function  ***/
-	// Because the size of color is normally 255, 8bit.
-	// If you don't use this one, you will get a weird imge.
-	uint8_t* pixels = new uint8_t[width * height * CHANNEL_NUM];
-
-	int index = 0;
-	for (int j = height - 1; j >= 0; --j)
-	{
-		for (int i = 0; i < width; ++i)
-		{
-		float r = (float)i / (float)width;
-		float g = (float)j / (float)height;
-		float b = 0.2f;
-		int ir = int(255.99 * r);
-		int ig = int(255.99 * g);
-		int ib = int(255.99 * b);
-
-		pixels[index++] = ir;
-		pixels[index++] = ig;
-		pixels[index++] = ib;
-		}
 	}
-	
-	// if CHANNEL_NUM is 4, you can use alpha channel in png
-	stbi_write_png("stbpng.png", width, height, CHANNEL_NUM, pixels, width * CHANNEL_NUM);
-
-	// You have to use 3 comp for complete jpg file. If not, the image will be grayscale or nothing.
-	stbi_write_jpg("stbjpg3.jpg", width, height, 3, pixels, 100);
-	
-	
-	delete[] pixels;
-	#endif
-	
-
-	}
-#endif
 
 	cout<<"\nCleaning objects...\n";
 	delete g_oGPU;
